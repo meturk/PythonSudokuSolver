@@ -1,11 +1,5 @@
-# Disclaimer: In this .py file, I use Keras to build a Convolutional Neural Network
-# with the exact same architecture as the one proposed by F.Chollet as an example 
-# in his Keras library for the Hand-written Digit Recognition problem:
-# https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
-#
-# I added some preprocessing steps, which I learned from these 2 sources:
-# 1/ https://medium.com/@o.kroeger/tensorflow-mnist-and-your-own-handwritten-digits-4d1cd32bbab4
-# 2/ https://www.youtube.com/watch?v=j-3vuBynnOE&list=PLQVvvaa0QuDfhTox0AjmQ6tvTgMBZBEXN&index=2
+#Numara tanımlama için model oluşturma uygulaması.
+#İsterseniz digitRecognition.h5 isimli önceden hazırlanmış model dosyasını kullanabilirsiniz.
 
 
 from __future__ import print_function

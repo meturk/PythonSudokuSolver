@@ -1,13 +1,4 @@
-# This .py file contains the heart of my Real Time Sudoku Solver
-# Here's my Youtube video showing each individual steps I took to
-# detect a Sudoku board, extract and recognize digits, solve the puzzle
-# and print the result back to the video frame:
-# LINK TO MY DEMO YOUTUBE VIDEO: https://www.youtube.com/watch?v=uUtw6Syic6A
-
-# Disclaimer: I was a newbie to Image Processing and Machine Learning when
-# I built this project. A lot of my ideas, and codes, were learned from others
-# To see a list of the resources I have used, please read README.txt or go to
-# my Youtube video and look at description
+# Gerçek zamanlı Sudoku Çözücü Projesi
 
 import cv2
 import numpy as np
@@ -23,7 +14,7 @@ from keras.models import model_from_json
 import sudokuSolver
 import copy
 
-# Write solution on "image"
+# Sonucu "image" olarak yazdıran fonksiyon
 def write_solution_on_image(image, grid, user_grid):
     # Write grid on image
     SIZE = 9
@@ -31,8 +22,8 @@ def write_solution_on_image(image, grid, user_grid):
     height = image.shape[0] // 9
     for i in range(SIZE):
         for j in range(SIZE):
-            if(user_grid[i][j] != 0):    # If user fill this cell
-                continue                # Move on
+            if(user_grid[i][j] != 0):    # Eğer Kullanıcı burayı doldurursa
+                continue
             text = str(grid[i][j])
             off_set_x = width // 15
             off_set_y = height // 15
@@ -50,7 +41,6 @@ def write_solution_on_image(image, grid, user_grid):
                                                   font, font_scale, (0,255,0), thickness=3, lineType=cv2.LINE_AA)
     return image
 
-# Compare every single elements of 2 matrices and return if all corresponding entries are equal
 def two_matrices_are_equal(matrix_1, matrix_2, row, col):
     for i in range(row):
         for j in range(col):
@@ -58,9 +48,7 @@ def two_matrices_are_equal(matrix_1, matrix_2, row, col):
                 return False
     return True
 
-# This function is used as the first criteria for detecting whether 
-# the contour is a Sudoku board or not: Length of Sides CANNOT be too different (sudoku board is square)
-# Return if the longest size is > the shortest size * eps_scale
+
 def side_lengths_are_too_different(A, B, C, D, eps_scale):
     AB = math.sqrt((A[0]-B[0])**2 + (A[1]-B[1])**2)
     AD = math.sqrt((A[0]-D[0])**2 + (A[1]-D[1])**2)
@@ -70,15 +58,11 @@ def side_lengths_are_too_different(A, B, C, D, eps_scale):
     longest = max(AB, AD, BC, CD)
     return longest > eps_scale * shortest
 
-# This function is used as the second criteria for detecting whether
-# the contour is a Sudoku board or not: All 4 angles has to be approximately 90 degree
-# Approximately 90 degress with tolerance epsilon
+
 def approx_90_degrees(angle, epsilon):
     return abs(angle - 90) < epsilon
 
-# This function is used for seperating the digit from noise in "crop_image"
-# The Sudoku board will be chopped into 9x9 small square image,
-# each of those image is a "crop_image"
+
 def largest_connected_component(image):
 
     image = image.astype('uint8')
@@ -91,8 +75,7 @@ def largest_connected_component(image):
         return blank_image
 
     max_label = 1
-    # Start from component 1 (not 0) because we want to leave out the background
-    max_size = sizes[1]     
+    max_size = sizes[1]
 
     for i in range(2, nb_components):
         if sizes[i] > max_size:
@@ -104,7 +87,7 @@ def largest_connected_component(image):
     img2[output == max_label] = 0
     return img2
 
-# Return the angle between 2 vectors in degrees
+# 2 Vektör arasındaki açının derecesini döndürür
 def angle_between(vector_1, vector_2):
     unit_vector_1 = vector_1 / np.linalg.norm(vector_1)
     unit_vector2 = vector_2 / np.linalg.norm(vector_2)
@@ -112,7 +95,7 @@ def angle_between(vector_1, vector_2):
     angle = np.arccos(dot_droduct)
     return angle * 57.2958  # Convert to degree
 
-# Calculate how to centralize the image using its center of mass
+# Resmin ağırlık bölgesinin merkezini döndürür
 def get_best_shift(img):
     cy, cx = ndimage.measurements.center_of_mass(img)
     rows, cols = img.shape
@@ -127,8 +110,8 @@ def shift(img,sx,sy):
     shifted = cv2.warpAffine(img,M,(cols,rows))
     return shifted
 
-# Get 4 corners from contour.
-# These 4 corners will be the corners of the Sudoku board
+# Şeklin 4 köşes,nin belirler
+# Bu 4 köşe sudoku bulmacasının köşeleri olacaktır.
 def get_corners_from_contours(contours, corner_amount=4, max_iter=200):
 
     coefficient = 1
@@ -148,7 +131,7 @@ def get_corners_from_contours(contours, corner_amount=4, max_iter=200):
                 coefficient -= .01
     return None
 
-# Prepare and normalize the image to get ready for digit recognition
+# Numaraları tanımlamak için ön hazırlık ve ön işlemler
 def prepare(img_array):
     new_array = img_array.reshape(-1, 28, 28, 1)
     new_array = new_array.astype('float32')
@@ -160,9 +143,9 @@ def showImage(img, name, width, height):
     new_image = cv2.resize(new_image, (width, height))
     cv2.imshow(name, new_image)
 
-# This function take a webcam image, find the Sudoku board, 
-# recognizing digits, solve the Sudoku puzzle and
-# print the result back on the image, and then return that image
+#Bu fonksiyon ile bir webcam resmi alıp sudoku bulmacasının çerçevesini tanımlar.
+#Sayıları tanıölar ve bulmacayı çözer
+#Sonucu bir resim dosyası olarak döndürür
 def recognize_and_solve_sudoku(image, model, old_sudoku):
 
     clone_image = np.copy(image)    # deep copy to use later

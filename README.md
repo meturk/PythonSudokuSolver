@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Gerçek Zamanlı Sudoku Çözücü
 Python Eğitici Eğitimi Projesi
 

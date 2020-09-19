@@ -6,6 +6,6 @@ Python Eğitici Eğitimi Projesi
 
 +Halil İbrahim KOCAGÖZ
 +Ahmet KAYNAK
-+
++Mehmet Öztürk
 
 =======
